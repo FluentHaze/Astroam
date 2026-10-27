@@ -1,6 +1,40 @@
+# Dependencies and local package store
 node_modules/
+.pnpm-store/
+
+# Build output and tool caches
 dist/
 *.tsbuildinfo
+.vite/
+.vitest/
+
+# Test output
+coverage/
 playwright-report/
+blob-report/
 test-results/
+playwright/.cache/
+
+# Local environment; keep safe templates versioned
 .env*
+!.env.example
+!.env.*.example
+!.env.sample
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Python asset tooling
+__pycache__/
+*.py[cod]
+.venv/
+
+# OS and editor temporary files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
