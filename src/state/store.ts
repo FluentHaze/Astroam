@@ -3,6 +3,7 @@ import { MAX_UTC_MS, MIN_UTC_MS } from '../domain/astronomy/engine';
 import type { BodyId } from '../domain/astronomy/types';
 
 export type TimeMode = 'live' | 'paused' | 'playing';
+export type CameraMode = 'overview' | 'focused' | 'following' | 'free';
 interface ExplorerState {
   utcMs: number;
   mode: TimeMode;
@@ -11,6 +12,15 @@ interface ExplorerState {
   labels: boolean;
   orbits: boolean;
   resetToken: number;
+  cameraMode: CameraMode;
+  cameraTarget: BodyId | null;
+  meteors: boolean;
+  meteorBurst: number;
+  triggerMeteor: () => void;
+  focusBody: (id: BodyId) => void;
+  followBody: (id: BodyId) => void;
+  releaseCamera: () => void;
+  toggleMeteors: () => void;
   select: (id: BodyId | null) => void;
   setTime: (utcMs: number) => void;
   setSpeed: (speed: number) => void;
@@ -30,6 +40,26 @@ export const useExplorer = create<ExplorerState>((set) => ({
   labels: true,
   orbits: true,
   resetToken: 0,
+  cameraMode: 'overview',
+  cameraTarget: null,
+  meteors: true,
+  meteorBurst: 0,
+  triggerMeteor: () =>
+    set((state) => ({ meteors: true, meteorBurst: state.meteorBurst + 1 })),
+  focusBody: (cameraTarget) =>
+    set((state) => ({
+      cameraTarget,
+      cameraMode: 'focused',
+      resetToken: state.resetToken + 1,
+    })),
+  followBody: (cameraTarget) =>
+    set((state) => ({
+      cameraTarget,
+      cameraMode: 'following',
+      resetToken: state.resetToken + 1,
+    })),
+  releaseCamera: () => set({ cameraMode: 'free', cameraTarget: null }),
+  toggleMeteors: () => set((state) => ({ meteors: !state.meteors })),
   select: (selected) => set({ selected }),
   setTime: (utcMs) => {
     if (Number.isFinite(utcMs) && utcMs >= MIN_UTC_MS && utcMs <= MAX_UTC_MS) {
@@ -59,5 +89,10 @@ export const useExplorer = create<ExplorerState>((set) => ({
     }),
   toggleLabels: () => set((state) => ({ labels: !state.labels })),
   toggleOrbits: () => set((state) => ({ orbits: !state.orbits })),
-  resetCamera: () => set((state) => ({ resetToken: state.resetToken + 1 })),
+  resetCamera: () =>
+    set((state) => ({
+      resetToken: state.resetToken + 1,
+      cameraMode: 'overview',
+      cameraTarget: null,
+    })),
 }));

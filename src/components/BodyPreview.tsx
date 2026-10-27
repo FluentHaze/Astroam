@@ -1,5 +1,6 @@
 import { Component, memo, type ReactNode } from 'react';
 import { Canvas } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
 import type { BodyInfo } from '../domain/astronomy/types';
 import { PlanetModel } from '../scene/PlanetModel';
 import { PLANET_MAPS, useTextureAsset } from '../scene/planetTexture';
@@ -39,7 +40,7 @@ export default memo(function BodyPreview({ body }: { body: BodyInfo }) {
           fallback={
             <span className="preview-unavailable">三维预览暂不可用</span>
           }
-          style={{ pointerEvents: 'none', position: 'absolute', inset: 0 }}
+          style={{ position: 'absolute', inset: 0 }}
         >
           <ambientLight intensity={0.55} />
           <directionalLight
@@ -50,8 +51,14 @@ export default memo(function BodyPreview({ body }: { body: BodyInfo }) {
             body={body}
             radius={isSaturn ? 0.7 : 0.95}
           />
+          <OrbitControls
+            enablePan={false}
+            enableZoom={false}
+            enableDamping={false}
+          />
         </Canvas>
       </PreviewBoundary>
+      <span className="preview-drag-hint">拖动旋转</span>
       <span
         className="preview-cross cross-one"
         aria-hidden="true"

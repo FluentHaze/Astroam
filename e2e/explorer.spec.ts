@@ -81,3 +81,68 @@ test('failed texture keeps the scene usable and can be retried', async ({
   ).toBeVisible();
   await expect(retry).not.toBeVisible();
 });
+
+test('focus, follow, pan and return to overview form a camera exploration loop', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push(message.text());
+  });
+  await page.goto('/');
+  await page.getByRole('button', { name: '聚焦天体', exact: true }).click();
+  await expect(page.getByText('已聚焦 · 地球', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '跟随天体', exact: true }).click();
+  await expect(
+    page.getByText('正在跟随 · 地球', { exact: true }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: '返回总览', exact: true }).click();
+  await expect(page.locator('.camera-status')).toHaveCount(0);
+  await page.getByRole('button', { name: /08.*土星/ }).click();
+  await page.getByRole('button', { name: '跟随天体', exact: true }).click();
+  await expect(
+    page.getByText('正在跟随 · 土星', { exact: true }),
+  ).toBeVisible();
+  const canvas = page.locator('.scene-container canvas');
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error('Scene canvas has no bounds');
+  await page.mouse.move(box.x + box.width * 0.5, box.y + box.height * 0.5);
+  await page.mouse.down({ button: 'right' });
+  await page.mouse.move(box.x + box.width * 0.55, box.y + box.height * 0.5, {
+    steps: 10,
+  });
+  await page.mouse.up({ button: 'right' });
+  await expect(page.locator('.camera-status')).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test('meteor effects can be switched off and triggered on demand', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const toggle = page.getByRole('button', { name: '流星特效', exact: true });
+  await expect(page.locator('.meteor-layer')).toHaveCount(1);
+  await toggle.click();
+  await expect(page.locator('.meteor-layer')).toHaveCount(0);
+  await page.getByRole('button', { name: '划过一颗流星', exact: true }).click();
+  await expect(page.locator('.meteor-burst')).toHaveCount(1);
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('reduced motion disables decorative meteors', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  await expect(
+    page.getByRole('button', { name: '流星特效', exact: true }),
+  ).toBeDisabled();
+  await expect(
+    page.getByRole('button', { name: '划过一颗流星', exact: true }),
+  ).toBeDisabled();
+  await expect(page.locator('.meteor-layer')).toHaveCount(0);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await expect(
+    page.getByRole('button', { name: '流星特效', exact: true }),
+  ).toBeEnabled();
+  await expect(page.locator('.meteor-layer')).toHaveCount(1);
+});

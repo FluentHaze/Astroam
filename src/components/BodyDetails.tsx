@@ -9,6 +9,8 @@ const BodyPreview = lazy(() => import('./BodyPreview'));
 export function BodyDetails({ snapshot }: { snapshot: Snapshot | null }) {
   const selected = useExplorer((state) => state.selected);
   const select = useExplorer((state) => state.select);
+  const cameraMode = useExplorer((state) => state.cameraMode);
+  const cameraTarget = useExplorer((state) => state.cameraTarget);
   if (!selected) return null;
   const body = BODY_BY_ID[selected];
   const position = snapshot?.positions[selected];
@@ -45,6 +47,21 @@ export function BodyDetails({ snapshot }: { snapshot: Snapshot | null }) {
           <h2>{body.name}</h2>
         </div>
         <span className="category-tag">{body.category}</span>
+      </div>
+      <div className="body-camera-actions">
+        <button
+          disabled={!snapshot}
+          onClick={() => useExplorer.getState().focusBody(selected)}
+        >
+          聚焦天体
+        </button>
+        <button
+          disabled={!snapshot}
+          aria-pressed={cameraMode === 'following' && cameraTarget === selected}
+          onClick={() => useExplorer.getState().followBody(selected)}
+        >
+          跟随天体
+        </button>
       </div>
       <p className="description">{body.description}</p>
       <dl className="body-stats">

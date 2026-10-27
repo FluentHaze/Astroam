@@ -396,6 +396,14 @@ button,
   color: var(--text-muted);
   font-size: 9px;
 }
+.preview-drag-hint {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  pointer-events: none;
+  color: var(--text-muted);
+  font-size: 9px;
+}
 .preview-unavailable,
 .preview-retry {
   position: absolute;
@@ -490,6 +498,164 @@ button,
   font-size: 10px;
   text-decoration-color: var(--border-hover);
   text-underline-offset: 4px;
+}
+.body-camera-actions {
+  display: flex;
+  gap: 8px;
+  margin: 12px 20px;
+}
+.body-camera-actions button {
+  flex: 1;
+  padding: 8px;
+  font-size: 12px;
+  color: var(--accent);
+  border-color: var(--selection-border);
+}
+.body-camera-actions button[aria-pressed='true'] {
+  background: var(--selected);
+}
+.camera-status {
+  position: absolute;
+  left: 400px;
+  bottom: 51px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 8px 4px 12px;
+  z-index: var(--z-panel);
+  color: var(--accent);
+  font-size: 11px;
+}
+.camera-status button {
+  min-height: 36px;
+  padding: 5px 8px;
+  font-size: 11px;
+}
+.meteor-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 5;
+}
+.meteor-layer.is-paused .meteor {
+  animation-play-state: paused;
+}
+.intro-action {
+  position: absolute;
+  left: 196px;
+  top: 112px;
+  pointer-events: auto;
+  width: 132px;
+  white-space: nowrap;
+  min-height: 36px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--accent);
+}
+.meteor {
+  position: absolute;
+  width: 110px;
+  height: 2px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--text));
+  transform: rotate(28deg);
+  animation: meteor-pass 11s linear infinite;
+}
+.meteor::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text);
+  box-shadow: 0 0 10px var(--accent);
+}
+.meteor-one {
+  left: 15%;
+  top: 18%;
+  animation-delay: 0.5s;
+}
+.meteor-two {
+  left: 46%;
+  top: 10%;
+  animation-duration: 13s;
+  animation-delay: 4s;
+}
+.meteor-three {
+  left: 37%;
+  top: 48%;
+  animation-duration: 17s;
+  animation-delay: 8s;
+}
+.meteor-burst {
+  left: 25%;
+  top: 22%;
+  animation: meteor-once 1.6s linear forwards;
+}
+@keyframes meteor-once {
+  0% {
+    opacity: 0;
+    transform: translate3d(-80px, -40px, 0) rotate(28deg);
+  }
+  12% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(320px, 175px, 0) rotate(28deg);
+  }
+}
+@keyframes meteor-pass {
+  0% {
+    opacity: 0;
+    transform: translate3d(-80px, -40px, 0) rotate(28deg);
+  }
+  2% {
+    opacity: 0.85;
+  }
+  12% {
+    opacity: 0;
+    transform: translate3d(320px, 175px, 0) rotate(28deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(320px, 175px, 0) rotate(28deg);
+  }
+}
+@media (max-width: 1199px) {
+  .camera-status {
+    left: 168px;
+    bottom: 102px;
+    max-width: calc(100% - 440px);
+  }
+}
+@media (max-width: 767px) {
+  .intro-action {
+    left: 0;
+    top: 85px;
+  }
+  .camera-status {
+    top: 292px;
+    left: 0;
+    bottom: auto;
+    max-width: calc(100% - 60px);
+    gap: 5px;
+    padding: 4px 8px;
+  }
+  .camera-status button {
+    min-height: 36px;
+    font-size: 10px;
+  }
+  .camera-status > span {
+    font-size: 10px;
+  }
+  .meteor {
+    width: 70px;
+  }
 }
 .scene-tools {
   position: absolute;
@@ -1023,6 +1189,9 @@ button,
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .meteor-layer {
+    display: none;
+  }
   *,
   *::before,
   *::after {

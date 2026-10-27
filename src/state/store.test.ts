@@ -41,3 +41,31 @@ describe('shared simulation clock', () => {
     expect(state.selected).toBe('Mars');
   });
 });
+
+describe('camera commands', () => {
+  it('keeps selection and simulation time independent of the observation target', () => {
+    const time = Date.UTC(2026, 9, 27);
+    useExplorer.getState().setTime(time);
+    useExplorer.getState().select('Earth');
+    useExplorer.getState().followBody('Mars');
+    useExplorer.getState().select(null);
+    expect(useExplorer.getState().cameraTarget).toBe('Mars');
+    expect(useExplorer.getState().cameraMode).toBe('following');
+    expect(useExplorer.getState().utcMs).toBe(time);
+    useExplorer.getState().resetCamera();
+    expect(useExplorer.getState().cameraTarget).toBeNull();
+    expect(useExplorer.getState().cameraMode).toBe('overview');
+    expect(useExplorer.getState().utcMs).toBe(time);
+  });
+
+  it('allows the most recent camera command to win and releases tracking', () => {
+    useExplorer.getState().focusBody('Moon');
+    const token = useExplorer.getState().resetToken;
+    useExplorer.getState().followBody('Saturn');
+    expect(useExplorer.getState().resetToken).toBeGreaterThan(token);
+    expect(useExplorer.getState().cameraTarget).toBe('Saturn');
+    useExplorer.getState().releaseCamera();
+    expect(useExplorer.getState().cameraMode).toBe('free');
+    expect(useExplorer.getState().cameraTarget).toBeNull();
+  });
+});

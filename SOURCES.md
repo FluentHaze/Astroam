@@ -12,7 +12,7 @@
 | 月亮           | [NASA Moon Facts](https://science.nasa.gov/moon/facts/)                                                      | 月球资料、约 27.3 天公转与约 29.5 天月相周期                                                   |
 | 球体纹理       | [Solar System Scope](https://www.solarsystemscope.com/textures/) · CC BY 4.0                                 | 十个 2048×1024 表面贴图；经公开署名镜像下载后转为 WebP                                         |
 | 档案缩略图     | `src/components/BodyPreview.tsx`                                                                             | 使用与场景相同的贴图与球体组件；固定预览光照，不代表当前相位                                   |
-| 背景星点       | `src/scene/SolarScene.tsx`                                                                                   | 确定性伪随机装饰，不对应真实恒星和星座                                                         |
+| 背景星空与银河 | `src/scene/Starfield.tsx`                                                                                    | 原创程序化银河与确定性星点，包含冷暖色、亮度层次和暗尘带；不对应真实星表或观测方位             |
 | 图标           | Lucide React 0.468.0                                                                                         | ISC，按需引用                                                                                  |
 
 项目不依赖付费 API、在线纹理服务、天气接口或账号系统。开源软件的许可随依赖包保留；正式对外分发前仍需生成包含所有间接依赖的完整第三方归属清单。当前未使用星表、城市数据。纹理属于基于影像与地图制作的美术资产，含调色与缺失区域补全，并非实时影像。
